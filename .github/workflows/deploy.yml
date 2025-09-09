@@ -85,11 +85,9 @@ jobs:
           vuln-type: os,library
           severity: CRITICAL,HIGH
 
-
-  destroy_cloud_run_service:
+  deploy_to_cloud_run:
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
-    needs: []
+    needs: trivy_docker_image_scan
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -104,20 +102,34 @@ jobs:
         with:
           project_id: ${{ env.PROJECT_ID }}
 
+      - name: Enable Required GCP APIs
+        run: |
+          gcloud services enable run.googleapis.com \
+            artifactregistry.googleapis.com \
+            cloudbuild.googleapis.com \
+            iam.googleapis.com
+
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.5
 
-      - name: Terraform Init
-        working-directory: ./terraform
-        run: terraform init -input=false
-
-      - name: Terraform Destroy
+      - name: Terraform Init & Plan
         working-directory: ./terraform
         run: |
-          terraform destroy --auto-approve \
+          terraform init -input=false
+          terraform plan -input=false \
             -var="project_id=${{ env.PROJECT_ID }}" \
             -var="region=${{ env.REGION }}" \
             -var="service_name=${{ env.SERVICE_NAME }}" \
             -var="container_image=${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}"
+
+      - name: Terraform Apply
+        working-directory: ./terraform
+        run: |
+          terraform apply --auto-approve \
+            -var="project_id=${{ env.PROJECT_ID }}" \
+            -var="region=${{ env.REGION }}" \
+            -var="service_name=${{ env.SERVICE_NAME }}" \
+            -var="container_image=${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}"
+
