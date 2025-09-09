@@ -7,7 +7,7 @@ app.use(express.json());
 
 // Basic route
 app.get("/", (req, res) => {
-  res.send("Hello, Everyone! 🚀 Node.js app deployed on Google Cloud Run!");
+  res.send("Hello, Everyone!");
 });
 
 // Example API route
@@ -21,3 +21,4 @@ app.post("/echo", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
