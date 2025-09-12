@@ -7,6 +7,9 @@ This project demonstrates how to **deploy a sample Node.js application** on **Go
 - **Google Artifact Registry (GAR)** → for container image storage
 - **GoDaddy** → for custom domain mapping
 
+<img width="1280" height="720" alt="Deploy Nodejs Application on Google Cloud Run using GitHub Actions - Thumbnail" src="https://github.com/user-attachments/assets/6c04b187-8dbb-42e1-a110-503a87cefe10" />
+
+
 The pipeline covers the full cycle from **code commit** → **Docker build** → **security scans** → **deploy to google cloud run** → **domain mapping with godaddy**.
 
 ### 📂 Project Structure:
