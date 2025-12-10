@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket = "test-terraform001-bucket"
+    bucket = "test-terraform001-bucket-florin"
     prefix = "terraform/state"
   }
 }
